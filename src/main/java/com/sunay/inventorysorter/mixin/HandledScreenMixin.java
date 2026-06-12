@@ -91,6 +91,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
         int startSlot = -1;
         int endSlot = -1;
+        boolean sortPlayer = false;
 
         if ((Object)this instanceof InventoryScreen) {
             startSlot = 9;
@@ -103,6 +104,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         } else if (this.handler instanceof GenericContainerScreenHandler containerHandler) {
             startSlot = 0;
             endSlot = containerHandler.getRows() * 9 - 1;
+            sortPlayer = true;
         } else {
             int totalSlots = this.handler.slots.size();
             if (totalSlots >= 36) {
@@ -112,7 +114,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
 
         if (startSlot != -1 && endSlot != -1) {
-            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot));
+            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer));
         }
     }
 }
