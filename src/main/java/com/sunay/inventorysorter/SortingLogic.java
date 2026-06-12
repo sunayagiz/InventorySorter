@@ -83,6 +83,29 @@ public class SortingLogic {
                 }
             }
 
+            // 1.5. Merge stacks
+            List<ItemStack> mergedStacks = new ArrayList<>();
+            for (ItemStack stack : stacks) {
+                boolean fullyMerged = false;
+                for (ItemStack existing : mergedStacks) {
+                    if (ItemStack.areItemsAndComponentsEqual(stack, existing)) {
+                        int transferAmount = Math.min(stack.getCount(), existing.getMaxCount() - existing.getCount());
+                        if (transferAmount > 0) {
+                            existing.increment(transferAmount);
+                            stack.decrement(transferAmount);
+                            if (stack.isEmpty()) {
+                                fullyMerged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!fullyMerged && !stack.isEmpty()) {
+                    mergedStacks.add(stack);
+                }
+            }
+            stacks = mergedStacks;
+
             // 2. Sort stacks. Use a safe name retrieval to avoid crashes on malformed NBT.
             stacks.sort(Comparator.comparing(stack -> {
                 try {
