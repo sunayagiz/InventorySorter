@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 public class InventorySorter implements ModInitializer {
     public static final String MOD_ID = "inventorysorter";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(InventorySorter.class);
 
     @Override
     public void onInitialize() {
