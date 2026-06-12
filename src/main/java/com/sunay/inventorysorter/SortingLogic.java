@@ -3,6 +3,8 @@ package com.sunay.inventorysorter;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.PlayerScreenHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +26,24 @@ public class SortingLogic {
     public static void sort(PlayerEntity player, ScreenHandler handler, int start, int end) {
         if (handler == null || player == null) return;
 
-        // Creative Mode Deletion Fix: Disable sorting or handle safely in creative
+        // Creative Mode Logic: Allow sorting in Creative if it's safe
         if (player.isCreative()) {
-            LOGGER.info("Sorting disabled in Creative Mode to prevent item deletion.");
-            return;
+            if (handler instanceof GenericContainerScreenHandler) {
+                // Sorting containers (chests) is always safe in creative
+                LOGGER.info("Sorting container in Creative Mode.");
+            } else if (handler instanceof PlayerScreenHandler) {
+                // For player inventory in creative, only allow the main 27 slots (9-35)
+                // This avoids the crafting grid and armor slots which can behave oddly in creative
+                if (start < 9 || end > 35) {
+                    LOGGER.warn("Blocked unsafe creative sort attempt on player inventory: {}-{}", start, end);
+                    return;
+                }
+                LOGGER.info("Sorting player inventory in Creative Mode.");
+            } else {
+                // For other handlers, we stay safe and block it unless we know it's a container
+                LOGGER.info("Sorting disabled in Creative Mode for {} to prevent item deletion.", handler.getClass().getSimpleName());
+                return;
+            }
         }
 
         LOGGER.info("Sorting slots {}-{} in handler {} for player {}", start, end, handler.getClass().getSimpleName(), player.getName().getString());

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-12
+
+### Added
+- **Cool S Icon:** Replaced text-based "S" button with a stylized "Cool S" transparent PNG icon.
+
+### Changed
+- **Smaller Button:** Reduced the sort button size from 20x20 to 12x12 for a cleaner UI.
+- **Improved UI Layout:** Adjusted dynamic button positioning to account for the smaller size.
+
+### Fixed
+- **Creative Mode Sorting:** Enabled sorting in Creative Mode for containers (chests) and implemented safe sorting for the player's main inventory.
+
 ## [1.1.0] - 2026-06-12
 
 ### Added

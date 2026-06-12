@@ -3,16 +3,18 @@ package com.sunay.inventorysorter.mixin;
 import com.sunay.inventorysorter.InventorySorterClient;
 import com.sunay.inventorysorter.ModNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,6 +30,8 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Shadow protected int y;
     @Shadow protected int backgroundWidth;
 
+    @Unique private static final Identifier SORT_ICON = Identifier.of("inventorysorter", "textures/gui/sort_button.png");
+
     protected HandledScreenMixin(Text title) {
         super(title);
     }
@@ -37,9 +41,19 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         int buttonX = calculateDynamicX();
         int buttonY = this.y + 4;
 
-        this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.inventorysorter.sort_button"), button -> {
+        // Custom Button with Cool S Icon
+        ButtonWidget sortButton = new ButtonWidget(buttonX, buttonY, 12, 12, Text.empty(), button -> {
             this.sortActiveInventory();
-        }).dimensions(buttonX, buttonY, 20, 20).build());
+        }, (textSupplier) -> Text.translatable("gui.inventorysorter.sort_button")) {
+            @Override
+            public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+                super.renderWidget(context, mouseX, mouseY, delta);
+                // Draw the Cool S icon (8x8 centered in 12x12)
+                context.drawTexture(SORT_ICON, this.getX() + 2, this.getY() + 2, 0, 0, 8, 8, 8, 8);
+            }
+        };
+
+        this.addDrawableChild(sortButton);
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
@@ -52,23 +66,21 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
     @Unique
     private int calculateDynamicX() {
-        int preferredX = this.x + this.backgroundWidth - 24;
+        int preferredX = this.x + this.backgroundWidth - 16;
         int preferredY = this.y + 4;
         
-        // Simple collision detection with other buttons to avoid overlap
         boolean collision = false;
         for (Element element : this.children()) {
             if (element instanceof ClickableWidget widget) {
-                if (widget.getX() >= preferredX && widget.getX() < preferredX + 20 &&
-                    widget.getY() >= preferredY && widget.getY() < preferredY + 20) {
+                if (widget.getX() >= preferredX && widget.getX() < preferredX + 12 &&
+                    widget.getY() >= preferredY && widget.getY() < preferredY + 12) {
                     collision = true;
                     break;
                 }
             }
         }
         
-        // If there's a collision, move the button to the left
-        return collision ? preferredX - 22 : preferredX;
+        return collision ? preferredX - 14 : preferredX;
     }
 
     @Unique
@@ -76,18 +88,13 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         int startSlot = -1;
         int endSlot = -1;
 
-        // Detect which inventory is currently focused based on the screen type
-        if ((Object)this instanceof InventoryScreen) {
-            // Player inventory: sort main 27 slots (9-35)
+        if ((Object)this instanceof InventoryScreen || (Object)this instanceof CreativeInventoryScreen) {
             startSlot = 9;
             endSlot = 35;
         } else if (this.handler instanceof GenericContainerScreenHandler containerHandler) {
-            // Chest inventory: sort all container slots
             startSlot = 0;
             endSlot = containerHandler.getRows() * 9 - 1;
         } else {
-            // Fallback for other containers: sort slots that are not part of the player inventory
-            // Player inventory is typically the last 36 slots
             int totalSlots = this.handler.slots.size();
             if (totalSlots > 36) {
                 startSlot = 0;
