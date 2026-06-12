@@ -50,10 +50,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 super.renderWidget(context, mouseX, mouseY, delta);
                 // Draw the Cool S icon (8x8 centered in 12x12)
                 context.drawTexture(SORT_ICON, this.getX() + 2, this.getY() + 2, 0, 0, 8, 8, 8, 8);
-                
-                // Fallback/Overlay: Draw a small "S" so it's legible even if texture is missing
-                int textWidth = textRenderer.getWidth("S");
-                context.drawText(textRenderer, "S", this.getX() + (12 - textWidth) / 2 + 1, this.getY() + 2, 0xFFFFFF, true);
             }
         };
 
