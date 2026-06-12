@@ -1,7 +1,6 @@
 package com.sunay.inventorysorter;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import org.slf4j.Logger;
@@ -19,28 +18,19 @@ public class SortingLogic {
     }
 
     /**
-     * Sorts the main 27 slots of the player's inventory (slots 9-35) alphabetically by item name.
-     */
-    public static void sortInventory(PlayerInventory inventory) {
-        if (inventory != null && inventory.player != null) {
-            sort(inventory.player.currentScreenHandler, 9, 35);
-        }
-    }
-
-    /**
      * Generic sort method for any screen handler and slot range.
-     * Handles client-side thread safety by ensuring execution on the main client thread.
+     * Performs sorting on the server side to prevent desync.
      */
-    public static void sort(ScreenHandler handler, int start, int end) {
-        if (handler == null) return;
+    public static void sort(PlayerEntity player, ScreenHandler handler, int start, int end) {
+        if (handler == null || player == null) return;
 
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (!client.isOnThread()) {
-            client.execute(() -> sort(handler, start, end));
+        // Creative Mode Deletion Fix: Disable sorting or handle safely in creative
+        if (player.isCreative()) {
+            LOGGER.info("Sorting disabled in Creative Mode to prevent item deletion.");
             return;
         }
 
-        LOGGER.info("Sorting slots {}-{} in handler {}", start, end, handler.getClass().getSimpleName());
+        LOGGER.info("Sorting slots {}-{} in handler {} for player {}", start, end, handler.getClass().getSimpleName(), player.getName().getString());
         
         List<ItemStack> stacks = new ArrayList<>();
 
@@ -65,5 +55,8 @@ public class SortingLogic {
                 handler.getSlot(slotId).setStack(stacks.get(i));
             }
         }
+        
+        // Ensure changes are synced to the client
+        handler.sendContentUpdates();
     }
 }

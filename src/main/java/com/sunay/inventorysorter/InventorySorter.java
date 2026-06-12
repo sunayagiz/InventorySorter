@@ -10,6 +10,7 @@ public class InventorySorter implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ModNetworking.registerC2SPackets();
         LOGGER.info("InventorySorter initialized! Sorting your world, one chest at a time.");
     }
 }

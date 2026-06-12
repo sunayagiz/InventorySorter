@@ -10,6 +10,10 @@ import org.lwjgl.glfw.GLFW;
 public class InventorySorterClient implements ClientModInitializer {
     private static KeyBinding sortKeyBinding;
 
+    public static KeyBinding getSortKeyBinding() {
+        return sortKeyBinding;
+    }
+
     @Override
     public void onInitializeClient() {
         sortKeyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -21,8 +25,10 @@ public class InventorySorterClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (sortKeyBinding.wasPressed()) {
-                if (client.player != null) {
-                    SortingLogic.sortInventory(client.player.getInventory());
+                if (client.player != null && client.currentScreen == null) {
+                    // Only sort player inventory if no screen is open
+                    // If a screen is open, the Mixin will handle it
+                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModNetworking.SortPayload(9, 35));
                 }
             }
         });

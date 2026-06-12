@@ -1,6 +1,8 @@
 package com.sunay.inventorysorter.mixin;
 
-import com.sunay.inventorysorter.SortingLogic;
+import com.sunay.inventorysorter.InventorySorterClient;
+import com.sunay.inventorysorter.ModNetworking;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -17,6 +19,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(HandledScreen.class)
 public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen {
@@ -37,6 +40,14 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         this.addDrawableChild(ButtonWidget.builder(Text.translatable("gui.inventorysorter.sort_button"), button -> {
             this.sortActiveInventory();
         }).dimensions(buttonX, buttonY, 20, 20).build());
+    }
+
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    private void onKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+        if (InventorySorterClient.getSortKeyBinding().matchesKey(keyCode, scanCode)) {
+            this.sortActiveInventory();
+            cir.setReturnValue(true);
+        }
     }
 
     @Unique
@@ -85,7 +96,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
 
         if (startSlot != -1 && endSlot != -1) {
-            SortingLogic.sort(this.handler, startSlot, endSlot);
+            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot));
         }
     }
 }
