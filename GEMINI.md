@@ -20,6 +20,8 @@
 - **Generate JAR:** `./gradlew build`
 - **Dev Environment:** `./gradlew runClient`
 - **Clean:** `./gradlew clean`
+- **Deployment Path:** `C:\Users\ASUS\AppData\Roaming\ModrinthApp\profiles\Fabric 1.21\mods`
+- **Mandatory Workflow:** After every version bump and successful build, the resulting `.jar` must be automatically moved to the Deployment Path, replacing old versions of this mod.
 
 ## Decision-Making
 - **Mandatory:** Never make arbitrary decisions on behalf of the user regarding project features, keybindings, UI layout, or significant architectural shifts. Always **ask for preference**.
