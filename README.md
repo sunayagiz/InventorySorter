@@ -1,6 +1,6 @@
 <div align="center">
   <div style="background-color: #2b2b2b; padding: 20px; border-radius: 10px; display: inline-block;">
-    <img src="src/main/resources/assets/inventorysorter/icon.png" width="128" height="128" alt="Inventory Sorter Icon" style="image-rendering: pixelated;"/>
+    <img src="./icon_highres.png" width="128" height="128" alt="Inventory Sorter Icon"/>
   </div>
   <h1>Inventory Sorter</h1>
   <p><em>A lightweight, safe, and intuitive inventory management mod for Minecraft Fabric.</em></p>
