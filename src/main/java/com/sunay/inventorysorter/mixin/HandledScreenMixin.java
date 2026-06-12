@@ -105,9 +105,9 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             endSlot = containerHandler.getRows() * 9 - 1;
         } else {
             int totalSlots = this.handler.slots.size();
-            if (totalSlots > 36) {
-                startSlot = 0;
-                endSlot = totalSlots - 37;
+            if (totalSlots >= 36) {
+                startSlot = totalSlots - 36;
+                endSlot = totalSlots - 10;
             }
         }
 
