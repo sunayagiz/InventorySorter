@@ -21,6 +21,9 @@
 - **Dev Environment:** `./gradlew runClient`
 - **Clean:** `./gradlew clean`
 
+## Decision-Making
+- **Mandatory:** Never make arbitrary decisions on behalf of the user regarding project features, keybindings, UI layout, or significant architectural shifts. Always **ask for preference**.
+
 ## Development Conventions
 - **Data Safety:** Never modify inventories directly without a backup/verify step.
 - **Localization:** Use `en_us.json` for all UI text. Access via `Text.translatable()`.
