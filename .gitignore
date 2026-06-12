@@ -1,0 +1,23 @@
+.gradle/
+build/
+bin/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.metadata/
+.classpath
+.project
+.settings/
+.externalToolBuilders/
+*.launch
+.factorypath
+
+# VS Code
+.vscode/
