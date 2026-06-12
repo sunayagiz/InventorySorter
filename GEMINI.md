@@ -1,28 +1,27 @@
 # Inventory Sorter - Gemini Instructions
 
 ## Project Overview
-**Inventory Sorter** is a client-side Minecraft mod built for the **Fabric loader** (version 1.21). It allows players to sort their inventory and chests using a keybinding or a dedicated UI button.
+**Inventory Sorter** is a client-side Minecraft mod for **Fabric 1.21**. It provides high-safety inventory sorting via keybindings and a smart UI button.
 
-- **Tech Stack:** Java 21, Fabric Loader, Gradle.
-- **Architecture:**
-  - **Main Mod:** `InventorySorter.java` handles common initialization.
-  - **Client Mod:** `InventorySorterClient.java` manages client-only features like keybindings (default key: **R**).
-  - **Core Logic:** `SortingLogic.java` contains the alphabetical sorting algorithms.
-  - **UI (Mixins):** `HandledScreenMixin.java` injects a "Sort" button (labeled "S") into all container screens.
+- **Tech Stack:** Java 21, Fabric Loader 1.21, Gradle 8.10.
+- **Key Features:**
+  - **Safe Sorting:** Uses a transaction-style approach (Copy -> Sort -> Verify -> Clear -> Refill) to prevent item loss.
+  - **Smart UI:** Detects if the player is looking at their own inventory or a container (chest) and targets the correct slots.
+  - **Internationalization:** All UI strings are localized (default: English).
+
+## Architecture
+- **`com.sunay.inventorysorter.InventorySorter`:** Main entrypoint (Common).
+- **`com.sunay.inventorysorter.InventorySorterClient`:** Client entrypoint; handles keybindings (Default: **R**).
+- **`com.sunay.inventorysorter.SortingLogic`:** Core business logic. Implements "Safe Sort" and stack merging.
+- **`com.sunay.inventorysorter.mixin.HandledScreenMixin`:** Injects the "Sort" button (S) and handles context-aware sorting.
 
 ## Building and Running
-This project uses Gradle. Key commands include:
-
-- **Build Mod:** `./gradlew build` (Generates JAR in `build/libs/`)
-- **Run Client:** `./gradlew runClient` (Launches Minecraft with the mod)
-- **Run Server:** `./gradlew runServer` (Launches a dedicated server)
-- **Clean Build:** `./gradlew clean`
+- **Generate JAR:** `./gradlew build`
+- **Dev Environment:** `./gradlew runClient`
+- **Clean:** `./gradlew clean`
 
 ## Development Conventions
-- **Package Structure:** All code lives under `com.sunay.inventorysorter`.
-- **Mixins:** UI modifications are handled via Mixins in `com.sunay.inventorysorter.mixin`.
-- **Translations:** Localization strings are stored in `src/main/resources/assets/inventorysorter/lang/en_us.json`.
-- **Git Workflow:** 
-  - Follow atomic commits.
-  - Push to `main` branch after each major task.
-  - Maintain the `PLAN.md` file to track development phases.
+- **Data Safety:** Never modify inventories directly without a backup/verify step.
+- **Localization:** Use `en_us.json` for all UI text. Access via `Text.translatable()`.
+- **Git:** Use atomic commits with `type: message` format. Push to `main` frequently.
+- **Roadmap:** Consult `ROADMAP.md` and `DECISIONS.md` before implementing large features.
