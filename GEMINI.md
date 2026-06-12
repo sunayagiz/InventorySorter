@@ -3,12 +3,14 @@
 ## Project Overview
 **Inventory Sorter** is a client-side Minecraft mod for **Fabric 1.21**. It provides high-safety inventory sorting via keybindings and a smart UI button.
 
+- **Current Version:** 1.1.7
 - **Tech Stack:** Java 21, Fabric Loader 1.21, Gradle 8.10.
 - **Key Features:**
   - **Safe Sorting:** Uses a transaction-style approach (Copy -> Sort -> Verify -> Clear -> Refill) performed on the **Server Side** via custom networking packets to prevent desync.
   - **Stack Merging:** Automatically merges identical items into full stacks before sorting.
   - **Dual Sorting:** Sorting from a container screen simultaneously sorts both the container and the player's main inventory.
   - **Smart UI:** Detects screen context and handles keypresses (**R**) even when screens are open. Renders a custom "Cool S" transparent PNG icon.
+  - **Icon Mastery:** Includes 512px high-res (README), 64px solid (Mod Menu), and 16px transparent (UI) variants of the Cool S logo.
   - **Creative Safety:** Automatically restricts sorting in Creative Mode to prevent inventory corruption (only allows survival tab and containers).
   - **Internationalization:** All UI strings are localized (default: English).
 
