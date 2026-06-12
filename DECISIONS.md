@@ -14,9 +14,9 @@
 **Decision:** Use a Mixin on `HandledScreen` that checks the active `ScreenHandler`. It dynamically identifies if it should sort slots 9-35 (Player) or 0-N (Container).
 **Impact:** Intuitive UX; prevents sorting the player's pockets when they intended to sort a chest.
 
-## Decision 3: v1.1.0 Networking Requirement
+## Decision 3: Server-Side Authority (Networking)
 **Date:** 2026-06-12
-**Status:** Planned
-**Context:** Client-side only sorting can cause desync on multiplayer servers.
-**Decision:** Future updates (v1.1.0+) must move core sorting logic to the server side using custom packets (C2S) to ensure server-side authority.
-**Impact:** Will require a server-side mod component; improves multiplayer stability.
+**Status:** Implemented
+**Context:** Client-side only sorting causes items to revert (desync) because the server is not aware of the slot changes.
+**Decision:** We implemented a C2S (Client-to-Server) packet using Fabric Networking API. The client sends a `SortPayload`, and the server performs the actual `SortingLogic.sort()`.
+**Impact:** 100% synchronization on both single-player and multiplayer; eliminates the "reverting items" bug.

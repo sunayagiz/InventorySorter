@@ -5,8 +5,9 @@
 
 - **Tech Stack:** Java 21, Fabric Loader 1.21, Gradle 8.10.
 - **Key Features:**
-  - **Safe Sorting:** Uses a transaction-style approach (Copy -> Sort -> Verify -> Clear -> Refill) to prevent item loss.
-  - **Smart UI:** Detects if the player is looking at their own inventory or a container (chest) and targets the correct slots.
+  - **Safe Sorting:** Uses a transaction-style approach (Copy -> Sort -> Verify -> Clear -> Refill) performed on the **Server Side** via custom networking packets to prevent desync.
+  - **Smart UI:** Detects screen context and handles keypresses (**R**) even when screens are open.
+  - **Creative Safety:** Automatically disables sorting in Creative Mode to prevent inventory corruption.
   - **Internationalization:** All UI strings are localized (default: English).
 
 ## Architecture
