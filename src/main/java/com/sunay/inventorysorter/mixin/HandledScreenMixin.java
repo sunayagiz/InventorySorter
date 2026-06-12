@@ -38,15 +38,16 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
     @Inject(method = "init", at = @At("TAIL"))
     private void addSortButton(CallbackInfo ci) {
-        int buttonX = calculateDynamicX();
-        int buttonY = this.y + 4;
-
         // Custom Button with Cool S Icon
-        ButtonWidget sortButton = new ButtonWidget(buttonX, buttonY, 12, 12, Text.empty(), button -> {
+        ButtonWidget sortButton = new ButtonWidget(this.x + this.backgroundWidth - 16, this.y + 4, 12, 12, Text.empty(), button -> {
             this.sortActiveInventory();
         }, (textSupplier) -> Text.translatable("gui.inventorysorter.sort_button")) {
             @Override
             public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+                // Dynamically update position to handle Recipe Book shifts or window resizing
+                this.setX(calculateDynamicX(this));
+                this.setY(y + 4);
+                
                 super.renderWidget(context, mouseX, mouseY, delta);
                 // Draw the Cool S icon (8x8 centered in 12x12)
                 context.drawTexture(SORT_ICON, this.getX() + 2, this.getY() + 2, 0, 0, 8, 8, 8, 8);
@@ -65,13 +66,13 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     }
 
     @Unique
-    private int calculateDynamicX() {
+    private int calculateDynamicX(ButtonWidget self) {
         int preferredX = this.x + this.backgroundWidth - 16;
         int preferredY = this.y + 4;
         
         boolean collision = false;
         for (Element element : this.children()) {
-            if (element instanceof ClickableWidget widget) {
+            if (element instanceof ClickableWidget widget && widget != self) {
                 if (widget.getX() >= preferredX && widget.getX() < preferredX + 12 &&
                     widget.getY() >= preferredY && widget.getY() < preferredY + 12) {
                     collision = true;

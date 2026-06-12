@@ -7,7 +7,7 @@
 
   [![Fabric](https://img.shields.io/badge/Loader-Fabric-orange?style=flat-square)](https://fabricmc.net/)
   [![Minecraft](https://img.shields.io/badge/Minecraft-1.21-success?style=flat-square)](https://minecraft.net/)
-  [![Version](https://img.shields.io/badge/Version-1.1.6-blue?style=flat-square)]()
+  [![Version](https://img.shields.io/badge/Version-1.1.8-blue?style=flat-square)]()
   [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 </div>
 
@@ -19,7 +19,7 @@
 ## Key Features
 - **Safe Transaction Sorting:** Items are copied, sorted, and verified on the server-side before any changes are made to your inventory. 100% protection against item deletion or duplication exploits.
 - **Smart Stack Merging:** Before sorting, identical items are automatically merged into full stacks to save maximum space.
-- **Context-Aware UI:** A stylized, non-intrusive "Cool S" button appears in containers. It dynamically adjusts its position to avoid overlapping with other mods like REI or JEI.
+- **Dynamic Context-Aware UI:** A stylized, non-intrusive "Cool S" button appears in containers. It dynamically adjusts its position every frame to handle Recipe Book shifts and avoid overlapping with other mods.
 - **Dual Sorting:** Pressing the sort key while looking at a chest will simultaneously sort both the chest's contents and your own inventory as independent, safe actions.
 - **Creative Mode Safe:** Intelligently disables sorting for dangerous creative tabs (like the search or crafting grid) to prevent ghost items, while fully supporting creative chest sorting.
 
