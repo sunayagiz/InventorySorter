@@ -2,6 +2,7 @@ package com.sunay.inventorysorter;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -129,16 +130,22 @@ public class SortingLogic {
             // 2. Sort stacks based on mode
             Comparator<ItemStack> comparator = switch (mode) {
                 case ALPHABETICAL -> Comparator.comparing(stack -> stack.getName().getString().toLowerCase());
-                case ID -> Comparator.comparing(stack -> net.minecraft.registry.Registries.ITEM.getId(stack.getItem()).toString());
-                case CATEGORY -> Comparator.comparing((ItemStack stack) -> stack.getItem().getComponents().toString()).thenComparing(stack -> stack.getName().getString().toLowerCase());
-                case RARITY -> Comparator.comparing((ItemStack stack) -> stack.getRarity().ordinal()).reversed().thenComparing(stack -> stack.getName().getString().toLowerCase());
+                case ID -> Comparator.comparing(stack -> net.minecraft.registry.Registries.ITEM.getId(stack.getItem()).getPath());
+                case CATEGORY -> Comparator.comparing((ItemStack stack) -> {
+                    // Group by a combination of ID namespace (to group mods) and item type
+                    Identifier id = net.minecraft.registry.Registries.ITEM.getId(stack.getItem());
+                    return id.getNamespace() + ":" + stack.getItem().getClass().getSimpleName();
+                }).thenComparing(stack -> stack.getName().getString().toLowerCase());
+                case RARITY -> Comparator.comparing((ItemStack stack) -> stack.getRarity().ordinal()).reversed()
+                        .thenComparing(stack -> stack.getName().getString().toLowerCase());
             };
 
+            LOGGER.debug("Sorting {} stacks using comparator for mode {}", stacks.size(), mode);
             stacks.sort((s1, s2) -> {
                 try {
                     return comparator.compare(s1, s2);
                 } catch (Exception e) {
-                    LOGGER.warn("Failed to compare stacks, using default order", e);
+                    LOGGER.warn("Failed to compare stacks {} and {}, using default order", s1, s2, e);
                     return 0;
                 }
             });
