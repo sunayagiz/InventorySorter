@@ -8,7 +8,8 @@ import net.minecraft.text.Text;
 public enum SortingMode {
     ALPHABETICAL("alphabetical"),
     ID("id"),
-    CATEGORY("category");
+    CATEGORY("category"),
+    QUANTITY("quantity");
 
     private final String translationKey;
 

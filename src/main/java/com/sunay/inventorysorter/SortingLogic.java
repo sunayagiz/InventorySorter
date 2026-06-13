@@ -135,6 +135,8 @@ public class SortingLogic {
                     // Group by item class name which effectively groups by category (BlockItem, SwordItem, FoodComponent etc)
                     return stack.getItem().getClass().getSimpleName();
                 }).thenComparing(stack -> stack.getName().getString().toLowerCase());
+                case QUANTITY -> Comparator.comparing((ItemStack stack) -> stack.getCount()).reversed()
+                        .thenComparing(stack -> stack.getName().getString().toLowerCase());
             };
 
             LOGGER.info("Sorting {} items for player {} using mode: {}", stacks.size(), player.getName().getString(), mode);
