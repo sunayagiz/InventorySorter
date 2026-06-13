@@ -3,5 +3,10 @@
   "category.inventorysorter.general": "Envanter Sıralayıcı",
   "gui.inventorysorter.sort_button": "S",
   "gui.inventorysorter.sort_button.tooltip": "Envanteri Sırala (R)",
-  "gui.inventorysorter.sort_button.narration": "Envanteri Sırala"
+  "gui.inventorysorter.sort_button.narration": "Envanteri Sırala",
+  "gui.inventorysorter.current_mode": "Mevcut Mod",
+  "gui.inventorysorter.mode.alphabetical": "Alfabetik",
+  "gui.inventorysorter.mode.id": "Eşya Kimliği",
+  "gui.inventorysorter.mode.category": "Kategori",
+  "gui.inventorysorter.mode.rarity": "Nadirlik"
 }

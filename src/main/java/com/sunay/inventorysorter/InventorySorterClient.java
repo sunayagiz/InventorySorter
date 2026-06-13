@@ -28,7 +28,7 @@ public class InventorySorterClient implements ClientModInitializer {
                 if (client.player != null && client.currentScreen == null) {
                     // Only sort player inventory if no screen is open
                     // If a screen is open, the Mixin will handle it
-                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModNetworking.SortPayload(9, 35, false));
+                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModNetworking.SortPayload(9, 35, false, SortingMode.ALPHABETICAL));
                 }
             }
         });

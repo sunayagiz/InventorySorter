@@ -12,12 +12,13 @@ public class ModNetworking {
     public static final Identifier SORT_PACKET_ID = Identifier.of("inventory_sorter", "sort");
     private static final java.util.Map<java.util.UUID, Long> COOLDOWNS = new java.util.HashMap<>();
 
-    public record SortPayload(int startSlot, int endSlot, boolean sortPlayer) implements CustomPayload {
+    public record SortPayload(int startSlot, int endSlot, boolean sortPlayer, SortingMode mode) implements CustomPayload {
         public static final CustomPayload.Id<SortPayload> ID = new CustomPayload.Id<>(SORT_PACKET_ID);
         public static final PacketCodec<RegistryByteBuf, SortPayload> CODEC = PacketCodec.tuple(
                 PacketCodecs.VAR_INT, SortPayload::startSlot,
                 PacketCodecs.VAR_INT, SortPayload::endSlot,
                 PacketCodecs.BOOL, SortPayload::sortPlayer,
+                PacketCodecs.indexed(i -> SortingMode.values()[i], SortingMode::ordinal), SortPayload::mode,
                 SortPayload::new
         );
 
@@ -38,11 +39,11 @@ public class ModNetworking {
             }
             COOLDOWNS.put(uuid, currentTime);
             context.player().getServer().execute(() -> {
-                SortingLogic.sort(context.player(), context.player().currentScreenHandler, payload.startSlot(), payload.endSlot());
+                SortingLogic.sort(context.player(), context.player().currentScreenHandler, payload.startSlot(), payload.endSlot(), payload.mode());
                 if (payload.sortPlayer()) {
                     int totalSlots = context.player().currentScreenHandler.slots.size();
                     if (totalSlots >= 36) {
-                        SortingLogic.sort(context.player(), context.player().currentScreenHandler, totalSlots - 36, totalSlots - 10);
+                        SortingLogic.sort(context.player(), context.player().currentScreenHandler, totalSlots - 36, totalSlots - 10, payload.mode());
                     }
                 }
             });

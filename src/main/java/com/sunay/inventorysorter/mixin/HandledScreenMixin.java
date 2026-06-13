@@ -27,6 +27,10 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundEvents;
 
+import com.sunay.inventorysorter.SortingMode;
+
+import net.minecraft.client.MinecraftClient;
+
 @Mixin(HandledScreen.class)
 public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen {
     @Shadow protected T handler;
@@ -35,6 +39,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Shadow protected int backgroundWidth;
 
     @Unique private static final Identifier SORT_ICON = Identifier.of("inventorysorter", "textures/gui/sort_button.png");
+    @Unique private static SortingMode currentMode = SortingMode.ALPHABETICAL;
 
     protected HandledScreenMixin(Text title) {
         super(title);
@@ -44,7 +49,12 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     private void addSortButton(CallbackInfo ci) {
         // Custom Button with Cool S Icon and Tooltip
         ButtonWidget iconButton = new ButtonWidget(this.x + this.backgroundWidth - 16, this.y + 4, 12, 12, Text.empty(), button -> {
-            this.sortActiveInventory();
+            if (Screen.hasShiftDown() || Screen.hasControlDown()) {
+                currentMode = currentMode.next();
+                updateSortButtonTooltip(button);
+            } else {
+                this.sortActiveInventory();
+            }
         }, (textSupplier) -> Text.translatable("gui.inventorysorter.sort_button.narration")) {
             @Override
             public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
@@ -56,11 +66,32 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 // Draw the Cool S icon (8x8 centered in 12x12)
                 context.drawTexture(SORT_ICON, this.getX() + 2, this.getY() + 2, 0, 0, 8, 8, 8, 8);
             }
+
+            @Override
+            public boolean mouseClicked(double mouseX, double mouseY, int button) {
+                if (this.clicked(mouseX, mouseY) && button == 1) { // Right click
+                    currentMode = currentMode.next();
+                    updateSortButtonTooltip(this);
+                    if (MinecraftClient.getInstance() != null) {
+                        this.playDownSound(MinecraftClient.getInstance().getSoundManager());
+                    }
+                    return true;
+                }
+                return super.mouseClicked(mouseX, mouseY, button);
+            }
         };
         
-        iconButton.setTooltip(Tooltip.of(Text.translatable("gui.inventorysorter.sort_button.tooltip")));
-
+        updateSortButtonTooltip(iconButton);
         this.addDrawableChild(iconButton);
+    }
+
+    @Unique
+    private void updateSortButtonTooltip(ButtonWidget button) {
+        Text tooltipText = Text.translatable("gui.inventorysorter.sort_button.tooltip")
+                .append("\n")
+                .append(Text.translatable("gui.inventorysorter.current_mode").append(": "))
+                .append(currentMode.getDisplayName());
+        button.setTooltip(Tooltip.of(tooltipText));
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
@@ -121,7 +152,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
 
         if (startSlot != -1 && endSlot != -1) {
-            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer));
+            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer, currentMode));
             // Play a satisfying click sound
             if (this.client != null) {
                 this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));

@@ -43,9 +43,10 @@ public class SortingLogic {
      * @param handler The screen handler representing the open inventory.
      * @param start   The starting slot index for the sort range.
      * @param end     The ending slot index for the sort range.
+     * @param mode    The sorting mode to use.
      */
-    public static void sort(PlayerEntity player, ScreenHandler handler, int start, int end) {
-        if (handler == null || player == null) return;
+    public static void sort(PlayerEntity player, ScreenHandler handler, int start, int end, SortingMode mode) {
+        if (handler == null || player == null || mode == null) return;
 
         // Bounds checks and DoS prevention
         if (start < 0 || end < 0) return;
@@ -76,7 +77,7 @@ public class SortingLogic {
             }
         }
 
-        LOGGER.info("Sorting slots {}-{} in handler {} for player {}", start, end, handler.getClass().getSimpleName(), player.getName().getString());
+        LOGGER.info("Sorting slots {}-{} in handler {} for player {} using mode {}", start, end, handler.getClass().getSimpleName(), player.getName().getString(), mode);
         
         List<ItemStack> stacks = new ArrayList<>();
         List<Integer> validSlotIndices = new ArrayList<>();
@@ -125,15 +126,22 @@ public class SortingLogic {
             }
             stacks = mergedStacks;
 
-            // 2. Sort stacks. Use a safe name retrieval to avoid crashes on malformed NBT.
-            stacks.sort(Comparator.comparing(stack -> {
+            // 2. Sort stacks based on mode
+            Comparator<ItemStack> comparator = switch (mode) {
+                case ALPHABETICAL -> Comparator.comparing(stack -> stack.getName().getString().toLowerCase());
+                case ID -> Comparator.comparing(stack -> net.minecraft.registry.Registries.ITEM.getId(stack.getItem()).toString());
+                case CATEGORY -> Comparator.comparing((ItemStack stack) -> stack.getItem().getComponents().toString()).thenComparing(stack -> stack.getName().getString().toLowerCase());
+                case RARITY -> Comparator.comparing((ItemStack stack) -> stack.getRarity().ordinal()).reversed().thenComparing(stack -> stack.getName().getString().toLowerCase());
+            };
+
+            stacks.sort((s1, s2) -> {
                 try {
-                    return stack.getName().getString().toLowerCase();
+                    return comparator.compare(s1, s2);
                 } catch (Exception e) {
-                    LOGGER.warn("Failed to get name for stack, using empty string for sorting", e);
-                    return "";
+                    LOGGER.warn("Failed to compare stacks, using default order", e);
+                    return 0;
                 }
-            }));
+            });
 
             // 3. Transactional modification: only modify inventory if steps 1 & 2 succeeded
             // First, clear all valid slots in the range
