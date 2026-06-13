@@ -23,6 +23,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.sound.SoundEvents;
+
 @Mixin(HandledScreen.class)
 public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen {
     @Shadow protected T handler;
@@ -38,10 +42,10 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
     @Inject(method = "init", at = @At("TAIL"))
     private void addSortButton(CallbackInfo ci) {
-        // Custom Button with Cool S Icon
-        ButtonWidget sortButton = new ButtonWidget(this.x + this.backgroundWidth - 16, this.y + 4, 12, 12, Text.empty(), button -> {
+        // Custom Button with Cool S Icon and Tooltip
+        ButtonWidget iconButton = new ButtonWidget(this.x + this.backgroundWidth - 16, this.y + 4, 12, 12, Text.empty(), button -> {
             this.sortActiveInventory();
-        }, (textSupplier) -> Text.translatable("gui.inventorysorter.sort_button")) {
+        }, (textSupplier) -> Text.translatable("gui.inventorysorter.sort_button.narration")) {
             @Override
             public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
                 // Dynamically update position to handle Recipe Book shifts or window resizing
@@ -53,8 +57,10 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
                 context.drawTexture(SORT_ICON, this.getX() + 2, this.getY() + 2, 0, 0, 8, 8, 8, 8);
             }
         };
+        
+        iconButton.setTooltip(Tooltip.of(Text.translatable("gui.inventorysorter.sort_button.tooltip")));
 
-        this.addDrawableChild(sortButton);
+        this.addDrawableChild(iconButton);
     }
 
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
@@ -116,6 +122,10 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
 
         if (startSlot != -1 && endSlot != -1) {
             ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer));
+            // Play a satisfying click sound
+            if (this.client != null) {
+                this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+            }
         }
     }
 }
