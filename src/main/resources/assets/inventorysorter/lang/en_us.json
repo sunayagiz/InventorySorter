@@ -7,6 +7,5 @@
   "gui.inventorysorter.current_mode": "Current Mode",
   "gui.inventorysorter.mode.alphabetical": "Alphabetical",
   "gui.inventorysorter.mode.id": "Item ID",
-  "gui.inventorysorter.mode.category": "Category",
-  "gui.inventorysorter.mode.rarity": "Rarity"
+  "gui.inventorysorter.mode.category": "Category"
 }

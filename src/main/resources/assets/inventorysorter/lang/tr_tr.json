@@ -7,6 +7,5 @@
   "gui.inventorysorter.current_mode": "Mevcut Mod",
   "gui.inventorysorter.mode.alphabetical": "Alfabetik",
   "gui.inventorysorter.mode.id": "Eşya Kimliği",
-  "gui.inventorysorter.mode.category": "Kategori",
-  "gui.inventorysorter.mode.rarity": "Nadirlik"
+  "gui.inventorysorter.mode.category": "Kategori"
 }
