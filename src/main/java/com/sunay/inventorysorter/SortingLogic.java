@@ -14,16 +14,35 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Core business logic for sorting inventories on the server side.
+ * <p>
+ * This class implements a "Safe Sort" transaction-style approach:
+ * 1. Collect and Copy: items are collected from slots and copied.
+ * 2. Merge: identical items are merged into full stacks.
+ * 3. Sort: items are sorted alphabetically by their display name.
+ * 4. Verify & Commit: if no errors occurred, the target slots are cleared and the sorted items are inserted.
+ * </p>
+ * This architecture prevents item desync and provides server-side authority for data integrity.
+ */
 public class SortingLogic {
     private static final Logger LOGGER = LoggerFactory.getLogger(SortingLogic.class);
 
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private SortingLogic() {
         // Utility class
     }
 
     /**
      * Generic sort method for any screen handler and slot range.
-     * Performs sorting on the server side to prevent desync.
+     * Performs sorting on the server side to prevent desync and ensure data safety.
+     *
+     * @param player  The player requesting the sort action.
+     * @param handler The screen handler representing the open inventory.
+     * @param start   The starting slot index for the sort range.
+     * @param end     The ending slot index for the sort range.
      */
     public static void sort(PlayerEntity player, ScreenHandler handler, int start, int end) {
         if (handler == null || player == null) return;
