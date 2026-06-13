@@ -3,7 +3,7 @@
 ## Project Overview
 **Inventory Sorter** is a client-side Minecraft mod for **Fabric 1.21**. It provides high-safety inventory sorting via keybindings and a smart UI button.
 
-- **Current Version:** 1.1.7
+- **Current Version:** 1.1.8
 - **Tech Stack:** Java 21, Fabric Loader 1.21, Gradle 8.10.
 - **Key Features:**
   - **Safe Sorting:** Uses a transaction-style approach (Copy -> Sort -> Verify -> Clear -> Refill) performed on the **Server Side** via custom networking packets to prevent desync.
