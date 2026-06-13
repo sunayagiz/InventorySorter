@@ -1,0 +1,7 @@
+{
+  "key.inventorysorter.sort": "Envanteri Sırala",
+  "category.inventorysorter.general": "Envanter Sıralayıcı",
+  "gui.inventorysorter.sort_button": "S",
+  "gui.inventorysorter.sort_button.tooltip": "Envanteri Sırala (R)",
+  "gui.inventorysorter.sort_button.narration": "Envanteri Sırala"
+}

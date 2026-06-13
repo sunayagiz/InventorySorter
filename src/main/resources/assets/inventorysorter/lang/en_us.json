@@ -1,5 +1,7 @@
 {
   "key.inventorysorter.sort": "Sort Inventory",
   "category.inventorysorter.general": "Inventory Sorter",
-  "gui.inventorysorter.sort_button": "S"
+  "gui.inventorysorter.sort_button": "S",
+  "gui.inventorysorter.sort_button.tooltip": "Sort Inventory (R)",
+  "gui.inventorysorter.sort_button.narration": "Sort Inventory"
 }
