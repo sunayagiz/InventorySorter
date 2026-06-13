@@ -19,7 +19,7 @@
 ## Key Features
 - **Safe Transaction Sorting:** Items are copied, sorted, and verified on the server-side before any changes are made to your inventory. 100% protection against item deletion or duplication exploits.
 - **Smart Stack Merging:** Before sorting, identical items are automatically merged into full stacks to save maximum space.
-- **Dynamic Context-Aware UI:** A stylized, non-intrusive "Cool S" button appears in containers. It dynamically adjusts its position every frame to handle Recipe Book shifts and avoid overlapping with other mods.
+- **Dynamic Context-Aware UI:** A stylized, non-intrusive "S" button appears in containers. It dynamically adjusts its position every frame to handle Recipe Book shifts and avoid overlapping with other mods.
 - **Dual Sorting:** Pressing the sort key while looking at a chest will simultaneously sort both the chest's contents and your own inventory as independent, safe actions.
 - **Creative Mode Safe:** Intelligently disables sorting for dangerous creative tabs (like the search or crafting grid) to prevent ghost items, while fully supporting creative chest sorting.
 
