@@ -9,9 +9,18 @@ import org.lwjgl.glfw.GLFW;
 
 public class InventorySorterClient implements ClientModInitializer {
     private static KeyBinding sortKeyBinding;
+    private static SortingMode currentMode = SortingMode.ALPHABETICAL;
 
     public static KeyBinding getSortKeyBinding() {
         return sortKeyBinding;
+    }
+
+    public static SortingMode getCurrentMode() {
+        return currentMode;
+    }
+
+    public static void cycleMode() {
+        currentMode = currentMode.next();
     }
 
     @Override
@@ -28,7 +37,7 @@ public class InventorySorterClient implements ClientModInitializer {
                 if (client.player != null && client.currentScreen == null) {
                     // Only sort player inventory if no screen is open
                     // If a screen is open, the Mixin will handle it
-                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModNetworking.SortPayload(9, 35, false, SortingMode.ALPHABETICAL));
+                    net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModNetworking.SortPayload(9, 35, false, currentMode));
                 }
             }
         });

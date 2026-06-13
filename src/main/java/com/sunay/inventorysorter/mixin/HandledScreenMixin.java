@@ -39,7 +39,6 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
     @Shadow protected int backgroundWidth;
 
     @Unique private static final Identifier SORT_ICON = Identifier.of("inventorysorter", "textures/gui/sort_button.png");
-    @Unique private static SortingMode currentMode = SortingMode.ALPHABETICAL;
 
     protected HandledScreenMixin(Text title) {
         super(title);
@@ -50,7 +49,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         // Custom Button with Cool S Icon and Tooltip
         ButtonWidget iconButton = new ButtonWidget(this.x + this.backgroundWidth - 16, this.y + 4, 12, 12, Text.empty(), button -> {
             if (Screen.hasShiftDown() || Screen.hasControlDown()) {
-                currentMode = currentMode.next();
+                InventorySorterClient.cycleMode();
                 updateSortButtonTooltip(button);
             } else {
                 this.sortActiveInventory();
@@ -70,7 +69,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
             @Override
             public boolean mouseClicked(double mouseX, double mouseY, int button) {
                 if (this.clicked(mouseX, mouseY) && button == 1) { // Right click
-                    currentMode = currentMode.next();
+                    InventorySorterClient.cycleMode();
                     updateSortButtonTooltip(this);
                     if (MinecraftClient.getInstance() != null) {
                         this.playDownSound(MinecraftClient.getInstance().getSoundManager());
@@ -90,7 +89,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         Text tooltipText = Text.translatable("gui.inventorysorter.sort_button.tooltip")
                 .append("\n")
                 .append(Text.translatable("gui.inventorysorter.current_mode").append(": "))
-                .append(currentMode.getDisplayName());
+                .append(InventorySorterClient.getCurrentMode().getDisplayName());
         button.setTooltip(Tooltip.of(tooltipText));
     }
 
@@ -152,7 +151,7 @@ public abstract class HandledScreenMixin<T extends ScreenHandler> extends Screen
         }
 
         if (startSlot != -1 && endSlot != -1) {
-            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer, currentMode));
+            ClientPlayNetworking.send(new ModNetworking.SortPayload(startSlot, endSlot, sortPlayer, InventorySorterClient.getCurrentMode()));
             // Play a satisfying click sound
             if (this.client != null) {
                 this.client.getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0f));
