@@ -21,6 +21,7 @@ public class InventorySorterClient implements ClientModInitializer {
 
     public static void cycleMode() {
         currentMode = currentMode.next();
+        InventorySorter.LOGGER.info("Sorting mode changed to: {}", currentMode);
     }
 
     @Override
